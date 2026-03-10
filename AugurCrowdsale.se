@@ -1,0 +1,53 @@
+data funders[](addr, amt, blockNum)
+data funderNum
+data addrToIndex[]
+data wallet
+data endBlock
+
+def init():
+    self.wallet = 0xa04fc9bd2be8bcc6875d9ebb964e8f858bcc1b4f
+    self.endBlock = 432015
+
+def buyRep():
+    if msg.value == 0:
+        return(0)
+    if block.number < self.endBlock:
+        send(self.wallet, msg.value)
+        self.funders[self.funderNum].amt = msg.value
+        self.funders[self.funderNum].blockNum = block.number
+        self.funders[self.funderNum].addr = tx.origin
+        self.addrToIndex[tx.origin] = self.funderNum
+        self.funderNum += 1
+        return(1)
+    else:
+        return(0)
+
+def getAmountSent(address):
+    amount = 0
+    i = 0
+    while i < self.funderNum:
+        if address == self.funders[i].addr:
+            amount += self.funders[i].amt
+        i += 1
+    return(amount)
+
+def getBlockNumSent(address):
+    return(self.funders[self.addrToIndex[address]].blockNum)
+
+def getFunderNum():
+    return(self.funderNum)
+
+def getAmtByIndex(index):
+    return(self.funders[index].amt)
+
+def getAddrByIndex(index):
+    return(self.funders[index].addr)
+
+def getBlockNumByIndex(index):
+    return(self.funders[index].blockNum)
+
+def addrToFunder(address):
+    return(self.addrToIndex[address])
+
+def getFundsRaised():
+    return(self.wallet.balance)
